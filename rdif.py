@@ -13,13 +13,13 @@ from drawBot import *
 # dA = 1
 # dB = 0.5
 
-RES = 200
-FRAMES = 12000
+RES = 100
+FRAMES = 101
 FEED = 0.05
 KILL = 0.0635
 TICK = 1
-dA = 1
-dB = 0.5
+dA = 0.25
+dB = 0.125
 
 ##################################################
 
@@ -44,9 +44,9 @@ def Seed():
     global CELLS
 
     dish = BezierPath()
-    dish.text("A", font="Hobeaux BD Bold", fontSize = 235, offset=(24,10))
+    dish.text("X", font="M74.2 Bold Micro", fontSize = 125, align='center', offset=(RES/2,8))
     seed = BezierPath()
-    seed.text("·", font="Hobeaux BD Regular", fontSize = 100, offset=(100,40))
+    seed.text("·", font="Hobeaux BD Regular", fontSize = 50, align='center', offset=(RES/2,30))
     for row in range(RES):
         for col in range(RES):
             if dish.pointInside((row,col)):
@@ -107,7 +107,7 @@ Seed()
 for frame in range(FRAMES):
     print("Processing states for frame " + str(frame + 1))
     Tick()
-    if frame % 75 == 0:
+    if frame % 100 == 0:
         newPage(RES,RES)
         Render()
 
