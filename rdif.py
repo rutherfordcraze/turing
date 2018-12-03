@@ -4,10 +4,19 @@ from drawBot import *
 
 ##################################################
 
+# hobeaux A
+# RES = 200
+# FRAMES = 10000
+# FEED = 0.056
+# KILL = 0.063
+# TICK = 1
+# dA = 1
+# dB = 0.5
+
 RES = 200
-FRAMES = 1
-FEED = 0.055
-KILL = 0.062
+FRAMES = 12000
+FEED = 0.05
+KILL = 0.0635
 TICK = 1
 dA = 1
 dB = 0.5
@@ -25,20 +34,26 @@ def Setup():
     for row in range(RES):
         CELLS.append([])
         for col in range(RES):
-            CELLS[row].append({ 'a': 1, 'b': 0 })
+            # a = agar, b = bacteria, c = clean (no feed distributed in C cells)
+            CELLS[row].append({ 'a': 0, 'b': 0, 'c': 1 })
 
 # Seed specific area with chem B
 def Seed():
     print("Seeding base chemicals...")
 
     global CELLS
-    for row in range(20):
-        for col in range(20):
-            CELLS[row + 90][col + 90]['b'] = 1
 
-    for row in range(10):
-        for col in range(10):
-            CELLS[row + 40][col + 60]['b'] = 1
+    dish = BezierPath()
+    dish.text("A", font="Hobeaux BD Bold", fontSize = 235, offset=(24,10))
+    seed = BezierPath()
+    seed.text("·", font="Hobeaux BD Regular", fontSize = 100, offset=(100,40))
+    for row in range(RES):
+        for col in range(RES):
+            if dish.pointInside((row,col)):
+                CELLS[row][col]['a'] = 1
+                CELLS[row][col]['c'] = 0
+            if seed.pointInside((row,col)) and CELLS[row][col]['c'] == 0:
+                CELLS[row][col]['b'] = 1
 
 # Calculate laplace function weights for local cells
 def Laplace(x, y, type):
@@ -61,18 +76,19 @@ def Constrain(value, min_val, max_val):
 def Render():
     for row in range(RES):
         for col in range(RES):
-            fill(Constrain(2 * CELLS[row][col]['b'], 0, 1))
+            fill(Constrain(2 * CELLS[row][col]['b'], 0, 1), 0, Constrain(2 * CELLS[row][col]['a'], 0, 1))
             rect(row, col, 1, 1)
 
 # Run updates for each cell
-def Tick(frame = 0):
-    print("Processing states for tick " + str(frame + 1) + ".")
-
+def Tick():
     global CELLS, CELLS_NEW
     CELLS_NEW = CELLS
 
     for row in range(1, RES - 1):
         for col in range(1, RES - 1):
+            if CELLS[row][col]['c'] > 0:
+                continue
+
             a = CELLS[row][col]['a']
             b = CELLS[row][col]['b']
 
@@ -85,13 +101,18 @@ def Tick(frame = 0):
     CELLS = CELLS_NEW
 
 Setup()
+#newPage(RES,RES)
 Seed()
 
 for frame in range(FRAMES):
-    Tick(frame)
+    print("Processing states for frame " + str(frame + 1))
+    Tick()
     if frame % 75 == 0:
         newPage(RES,RES)
         Render()
+
+# newPage(RES,RES)
+# Render()
 
 print("Saving final output...")
 saveImage("export.gif")
