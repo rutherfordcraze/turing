@@ -4,8 +4,8 @@ from drawBot import *
 
 ##################################################
 
-RES = 100
-FRAMES = 5000
+RES = 200
+FRAMES = 1
 FEED = 0.055
 KILL = 0.062
 TICK = 1
@@ -34,11 +34,11 @@ def Seed():
     global CELLS
     for row in range(20):
         for col in range(20):
-            CELLS[row + 40][col + 40]['b'] = 1
+            CELLS[row + 90][col + 90]['b'] = 1
 
     for row in range(10):
         for col in range(10):
-            CELLS[row + 70][col + 80]['b'] = 1
+            CELLS[row + 40][col + 60]['b'] = 1
 
 # Calculate laplace function weights for local cells
 def Laplace(x, y, type):
@@ -61,10 +61,6 @@ def Constrain(value, min_val, max_val):
 def Render():
     for row in range(RES):
         for col in range(RES):
-            # if CELLS[row][col]['b'] < 0.5:
-            #     fill(1)
-            # else:
-            #     fill(0)
             fill(Constrain(2 * CELLS[row][col]['b'], 0, 1))
             rect(row, col, 1, 1)
 
@@ -93,32 +89,10 @@ Seed()
 
 for frame in range(FRAMES):
     Tick(frame)
-    if frame % 50 == 0:
+    if frame % 75 == 0:
         newPage(RES,RES)
         Render()
-
-# newPage(RES,RES)
-# Render()
 
 print("Saving final output...")
 saveImage("export.gif")
 print("Done!")
-
-# class Grid():
-
-#     def __init__(self, res):
-#         self.res = res
-
-#     def getRes(self):
-#         return self.res
-
-# grid1 = Grid(101)
-# grid2 = Grid(102)
-
-# print("Grid 1 res: ", grid1.getRes())
-# print("Grid 2 res: ", grid2.getRes())
-
-# grid2 = grid1
-# print("Swapped grids")
-# print("Grid 1 res: ", grid1.getRes())
-# print("Grid 2 res: ", grid2.getRes())
